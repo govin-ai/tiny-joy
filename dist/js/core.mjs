@@ -1,0 +1,7 @@
+export const normalize = s => String(s).trim().replace(/\s+/gu, ' ').toLocaleLowerCase();
+export function search(items, query, type='all') { const q=normalize(query); return items.filter(x=>(type==='all'||x.type===type)&&normalize([x.title,x.body,...x.tags].join(' ')).includes(q)); }
+export function nextItem(items,current,rng=Math.random){const pool=items.filter(x=>x.id!==current);return pool.length?pool[Math.floor(rng()*pool.length)]:items[0]??null;}
+export function optionsFrom(text){const items=[...new Set(text.split(/\r\n?|\n/).map(s=>s.trim()).filter(Boolean))];if(items.length<2)throw Error('请至少填写两个不同的选项。');if(items.length>200)throw Error('最多填写 200 个选项。');if(items.some(s=>[...s].length>100))throw Error('每个选项最多 100 个字符。');return items;}
+export function choose(text,rng=Math.random){const items=optionsFrom(text);return items[Math.floor(rng()*items.length)];}
+export function randomInteger(low,high,rng=Math.random){const parse=s=>{if(!/^[+-]?\d+$/.test(String(s).trim()))throw Error('请输入十进制整数，不含小数或指数。');const n=Number(s);if(!Number.isSafeInteger(n)||Math.abs(n)>1e9)throw Error('范围需在 -1,000,000,000 至 1,000,000,000 之间。');return n;};const a=parse(low),b=parse(high);if(a>b)throw Error('下限不能大于上限。');return a+Math.floor(rng()*(b-a+1));}
+export function countText(value){const s=value.replace(/\r\n?/g,'\n'),count=[...s].length;if(count>100000)throw Error('最多统计 100,000 个字符，请缩短文字。');return {count,clean:[...s.replace(/\s/gu,'')].length,lines:s?s.split('\n').length:0};}
